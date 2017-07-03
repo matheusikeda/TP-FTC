@@ -36,18 +36,18 @@ verifyTags t = case (snd $ convToTags t) of
                  otherwise -> Right "[ERROR] Definição de tag incorreta" 
 
 convToTags :: String -> Tag
-convToTags s = (a, conv [] (drop 2 (reverse $ convToToken [] b)))
+convToTags s = (a, conv [] (drop 2 (convToToken [] b)))
              where (a,b) = span (/= ':') s
 
 conv :: [Reg] -> [Token] -> [Reg]
 conv xs [] = xs
-conv (oe:od:xs) (TChar '+':ys) = conv (Or oe od : xs) ys
-conv (oe:od:xs) (TChar '.':ys) = conv (Conct oe od : xs) ys
-conv (o:xs) (TChar '*':ys) = conv (Star o : xs) ys
-conv xs (TChar y:ys) = conv (Literal y : xs) ys
-conv xs (TPlus:ys) = conv (Literal '+' : xs) ys
-conv xs (TConct:ys) = conv (Literal '.' : xs) ys
-conv xs (TTimes:ys) = conv (Literal '*' : xs) ys
-conv xs (TBackslash:ys) = conv (Literal '\\' : xs) ys
-conv xs (TLambda:ys) = conv (Lambda : xs) ys
-conv xs (TNewline:ys) = conv (Literal '\n' : xs) ys
+conv (oe:od:xs) (TChar '+':ys) = conv (xs++[Or oe od]) ys
+conv (oe:od:xs) (TChar '.':ys) = conv (xs++[Conct oe od]) ys
+conv (o:xs) (TChar '*':ys) = conv (xs++[Star o]) ys
+conv xs (TChar y:ys) = conv (xs++[Literal y]) ys
+conv xs (TPlus:ys) = conv (xs++[Literal '+']) ys
+conv xs (TConct:ys) = conv (xs++[Literal '.']) ys
+conv xs (TTimes:ys) = conv (xs++[Literal '*']) ys
+conv xs (TBackslash:ys) = conv (xs++[Literal '\\']) ys
+conv xs (TLambda:ys) = conv (xs++[Lambda]) ys
+conv xs (TNewline:ys) = conv (xs++[Literal '\n']) ys
