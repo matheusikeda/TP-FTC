@@ -11,14 +11,15 @@ clearMemory = do input <- S.readFile "memoriatags.txt"
                  putStrLn "[INFO] Saindo do sistema"
 
 memoryTags :: String -> IO()
-memoryTags [] = putStrLn "[ERROR] Falta de parâmetro"
 memoryTags s = do mem <- readFile "memoriatags.txt"
                   let aux = mem ++ s ++ "\n"
                   aux `deepseq` (writeFile "memoriatags.txt" aux)
+                  putStrLn "[INFO] Tag adicionada"
 
 saveTags :: IO()
 saveTags = do s <- readFile "memoriatags.txt"
               writeFile "defstags.txt" s
+              putStrLn "[INFO] Definições de tags salvas"
 
 openTags :: String -> IO ()
 openTags [] = putStrLn "[ERROR] Falta de parâmetro"
@@ -28,7 +29,7 @@ openTags s = do {catch (open) ex;}
                         {
                            input <- readFile s;
                            putStrLn input;
-                           putStrLn "[INFO] As definições de tags foram carregadas";
+                           --putStrLn "[INFO] Definições de tags carregadas";
                         }
                         ex erro = if isDoesNotExistError erro
                            then do
@@ -40,4 +41,4 @@ openTags s = do {catch (open) ex;}
 changePath :: String -> IO()
 changePath [] = putStrLn "[ERROR] Falta de parâmetro"
 changePath s = do path <- writeFile "caminho.txt" s
-                  putStrLn "[INFO] O caminho de saída foi carregado"   
+                  putStrLn "[INFO] Caminho de saída carregado"   

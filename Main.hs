@@ -1,9 +1,10 @@
+module Main where
+
 import Regex
 import Filecontrol
 
 main :: IO()
-main = do putStr "> "
-          c <- getLine
+main = do c <- getLine
           command c 
 
 divideString :: String -> String
@@ -24,7 +25,6 @@ command input = do case (fst $ span (/= ' ') input) of
                                               case (verifyTags input) of
                                                     Left _ -> memoryTags input 
                                                     Right s -> putStrLn s
-                                            
                    if not((fst $ span (/= ' ') input) == ":q") then main else putStr " "
 
 divideFile :: String -> IO ()
