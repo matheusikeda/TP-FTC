@@ -10,12 +10,12 @@ data  Reg = Lambda
 
 type Tag = (String, [Reg])
 
-literals :: Reg -> [Char]
-literals Lambda = "\\l"
-literals (Literal ch) = [ch]
-literals (Or r1 r2) = literals r2 ++ literals r1 ++ "+"
-literals (Conct r1 r2) = literals r2 ++ literals r1 ++ "."
-literals (Star r) = literals r ++ "*"
+-- literals :: Reg -> [Char]
+-- literals Lambda = "\\l"
+-- literals (Literal ch) = [ch]
+-- literals (Or r1 r2) = literals r2 ++ literals r1 ++ "+"
+-- literals (Conct r1 r2) = literals r2 ++ literals r1 ++ "."
+-- literals (Star r) = literals r ++ "*"
 
 --splits :: [a] -> [([a],[a])]
 --splits st = [splitAt n st | n <- [0 .. length st]]
