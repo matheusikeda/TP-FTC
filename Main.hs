@@ -16,13 +16,10 @@ command input = do case (fst $ span (/= ' ') input) of
                           ":l" -> openTags $ divideString input
                           ":o" -> changePath $ divideString input
                           ":p" -> divideInput $ divideString input
-                          ":s" -> saveTags 
-                          ":q" -> do clear "memoriatags.txt"
-                                     clear "caminho.txt"
-                                     clear "defstags.txt"
-                                     putStrLn "[INFO] Saindo do sistema"
+                          ":s" -> saveTags
+                          ":q" -> clearMemory
                           otherwise -> if ((head input) == ':')
-                                          then
+                            then
                                               putStrLn "[ERROR] Comando inválido"
                                           else 
                                               case (verifyTags input) of
