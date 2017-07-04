@@ -16,10 +16,10 @@ command input = do case (fst $ span (/= ' ') input) of
                           ":l" -> openTags $ divideString input
                           ":o" -> changePath $ divideString input
                           ":p" -> divideInput $ divideString input
-                          ":s" -> saveTags
+                          ":s" -> saveTags 
                           ":q" -> clearMemory
                           otherwise -> if ((head input) == ':')
-                            then
+                                          then
                                               putStrLn "[ERROR] Comando inválido"
                                           else 
                                               case (verifyTags input) of

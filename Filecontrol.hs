@@ -5,7 +5,7 @@ import Control.Exception
 import System.IO.Error
 import qualified System.IO.Strict as S
 
-clearMemory :: IO()
+clearMemory :: IO()     --
 clearMemory = do input <- S.readFile "memoriatags.txt"
                  writeFile "memoriatags.txt" ""
                  putStrLn "[INFO] Saindo do sistema"
@@ -29,7 +29,7 @@ openTags s = do {catch (open) ex;}
                         {
                            input <- readFile s;
                            putStrLn input;
-                           --putStrLn "[INFO] Definições de tags carregadas";
+                           putStrLn "[INFO] Definições de tags carregadas";
                         }
                         ex erro = if isDoesNotExistError erro
                            then do
