@@ -1,3 +1,5 @@
+--Matheus Ikeda 14.1.8070
+--Sabrina Fermano 13.1.8474
 module Filecontrol where
 
 import Control.DeepSeq
@@ -5,23 +7,18 @@ import Control.Exception
 import System.IO.Error
 import qualified System.IO.Strict as S
 
-clearMemory :: IO()     --
-clearMemory = do input <- S.readFile "memoriatags.txt"
-                 writeFile "memoriatags.txt" ""
-                 putStrLn "[INFO] Saindo do sistema"
-
-memoryTags :: String -> IO()
+memoryTags :: String -> IO() -- memoria de tags
 memoryTags s = do mem <- readFile "memoriatags.txt"
                   let aux = mem ++ s ++ "\n"
                   aux `deepseq` (writeFile "memoriatags.txt" aux)
                   putStrLn "[INFO] Tag adicionada"
 
-saveTags :: IO()
+saveTags :: IO() -- salva as tags definidas 
 saveTags = do s <- readFile "memoriatags.txt"
               writeFile "defstags.txt" s
               putStrLn "[INFO] Definições de tags salvas"
 
-openTags :: String -> IO ()
+openTags :: String -> IO () -- abre um arquivo contendo definicoes de tags
 openTags [] = putStrLn "[ERROR] Falta de parâmetro"
 openTags s = do {catch (open) ex;}
                    where 
@@ -38,7 +35,11 @@ openTags s = do {catch (open) ex;}
                         }
                         else ioError erro                   
 
-changePath :: String -> IO()
+changePath :: String -> IO() -- muda o caminho de saida 
 changePath [] = putStrLn "[ERROR] Falta de parâmetro"
 changePath s = do path <- writeFile "caminho.txt" s
                   putStrLn "[INFO] Caminho de saída carregado"   
+
+clear :: String -> IO() -- limpa arquivos
+clear s = do input <- S.readFile s
+             writeFile s ""

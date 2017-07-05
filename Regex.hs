@@ -1,3 +1,5 @@
+--Matheus Ikeda 14.1.8070
+--Sabrina Fermano 13.1.8474
 module Regex where
 import Token
 
@@ -35,7 +37,7 @@ verifyTags t = case (snd $ convToTags t) of
                  [a] -> Left a
                  otherwise -> Right "[ERROR] Definição de tag incorreta" 
 
-convToTags :: String -> Tag     --Divide uma string em uma tag até os 2 pontos e dos 2 pontos em diante em ER
+convToTags :: String -> Tag     --Divide uma string em uma tag 
 convToTags s = (a, conv [] (drop 2 (convToToken [] b)))
              where (a,b) = span (/= ':') s
 
