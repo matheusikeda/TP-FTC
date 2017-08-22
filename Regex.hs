@@ -2,6 +2,8 @@
 --Sabrina Fermano 13.1.8474
 module Regex where
 import Token
+import Data.List
+import Data.Either.Utils
 
 data  Reg = Lambda      --Define um tipo de ER
           | Literal Char
@@ -19,18 +21,18 @@ literals (Or r1 r2) = literals r2 ++ literals r1 ++ "+"
 literals (Conct r1 r2) = literals r2 ++ literals r1 ++ "."
 literals (Star r) = literals r ++ "*"
 
---splits :: [a] -> [([a],[a])]
---splits st = [splitAt n st | n <- [0 .. length st]]
+splits :: [a] -> [([a],[a])]
+splits st = [splitAt n st | n <- [0 .. length st]]
 
---frontSplits :: [a] -> [([a],[a])]
---frontSplits st = [splitAt n st | n <- [1  .. length st]]
+frontSplits :: [a] -> [([a],[a])]
+frontSplits st = [splitAt n st | n <- [1  .. length st]]
 
---matches :: Reg -> String -> Bool
---matches Epsilon st = (st == "")
---matches (Literal ch) st = (st == [ch])
---matches (Or r1 r2) st = matches r1 st || matches r2 st
---matches (Conct r1 r2) st = or [matches r1 s1 && matches r2 s2 | (s1,s2) <- splits st]
---matches (Star r) st = matches Epsilon st || or [matches r s1 && matches (Star r) s2 | (s1,s2) <- frontSplits st]
+matches :: Reg -> String -> Bool
+matches Lambda st = (st == "")
+matches (Literal ch) st = (st == [ch])
+matches (Or r1 r2) st = matches r1 st || matches r2 st
+matches (Conct r1 r2) st = or [matches r1 s1 && matches r2 s2 | (s1,s2) <- splits st]
+matches (Star r) st = matches Lambda st || or [matches r s1 && matches (Star r) s2 | (s1,s2) <- frontSplits st]
 
 verifyTags :: String -> Either Reg String   --Verifica se a tag foi definida seguindo os parâmetros definidos
 verifyTags t = case (snd $ convToTags t) of 
@@ -43,13 +45,40 @@ convToTags s = (a, conv [] (drop 2 (convToToken [] b)))
 
 conv :: [Reg] -> [Token] -> [Reg]    --Recebe uma lista de ER's e uma lista de tokens e retorna uma lista de regs
 conv xs [] = xs
-conv (oe:od:xs) (TChar '+':ys) = conv (xs++[Or oe od]) ys
-conv (oe:od:xs) (TChar '.':ys) = conv (xs++[Conct oe od]) ys
-conv (o:xs) (TChar '*':ys) = conv (xs++[Star o]) ys
-conv xs (TChar y:ys) = conv (xs++[Literal y]) ys
-conv xs (TPlus:ys) = conv (xs++[Literal '+']) ys
-conv xs (TConct:ys) = conv (xs++[Literal '.']) ys
-conv xs (TTimes:ys) = conv (xs++[Literal '*']) ys
-conv xs (TBackslash:ys) = conv (xs++[Literal '\\']) ys
-conv xs (TLambda:ys) = conv (xs++[Lambda]) ys
-conv xs (TNewline:ys) = conv (xs++[Literal '\n']) ys
+conv (oe:od:xs) (TChar '+':ys) = conv (Or od oe:xs) ys
+conv (oe:od:xs) (TChar '.':ys) = conv (Conct od oe:xs) ys
+conv (o:xs) (TChar '*':ys) = conv (Star o:xs) ys
+conv xs (TChar y:ys) = conv (Literal y:xs) ys
+conv xs (TPlus:ys) = conv (Literal '+':xs) ys
+conv xs (TConct:ys) = conv (Literal '.':xs) ys
+conv xs (TTimes:ys) = conv (Literal '*':xs) ys
+conv xs (TBackslash:ys) = conv (Literal '\\':xs) ys
+conv xs (TLambda:ys) = conv (Lambda:xs) ys
+conv xs (TNewline:ys) = conv (Literal '\n':xs) ys
+
+searchTag :: [Tag] -> String -> [Bool] -> [Bool] --retorna [] se nao existir a tag procurada
+searchTag [] s b = filter (==True) b
+searchTag xs s b = if ((fst $ head xs) == s)
+                    then 
+                        searchTag (tail xs) s (True:b)
+                    else
+                        searchTag (tail xs) s b 
+                        
+verifyMatches :: [Tag] -> String -> [String] -> [String]
+verifyMatches [] s [] = []
+verifyMatches [] s xs = [head $ reverse xs]
+verifyMatches t s xs = if (matches (head $ snd $ head t) s == True)
+                            then verifyMatches (tail t) s ((fst $ head t):xs)
+                            else verifyMatches (tail t) s xs
+
+quebra :: String -> [String] -> [String]
+quebra [] st = st 
+quebra s st = quebra (tail s) (st ++ (tail $ inits s))
+
+divide :: [String] -> [Tag] -> [String] -> [String]
+divide [] t xs = map head (group xs)
+divide s t xs = divide (tail s) t (xs ++ (verifyMatches t (head s) []))
+                
+printTag :: [String] -> String -> String
+printTag [] ys = tail ys
+printTag xs ys = printTag (tail xs) (ys ++ " " ++ head xs) 
