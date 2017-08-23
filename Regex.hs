@@ -66,7 +66,7 @@ searchTag xs s b = if ((fst $ head xs) == s)
                         
 verifyMatches :: [Tag] -> String -> [String] -> [String]
 verifyMatches [] s [] = []
-verifyMatches [] s xs = [head $ reverse xs]
+verifyMatches [] s xs = reverse xs
 verifyMatches t s xs = if (matches (head $ snd $ head t) s == True)
                             then verifyMatches (tail t) s ((fst $ head t):xs)
                             else verifyMatches (tail t) s xs
@@ -75,10 +75,17 @@ quebra :: String -> [String] -> [String]
 quebra [] st = st 
 quebra s st = quebra (tail s) (st ++ (tail $ inits s))
 
-divide :: [String] -> [Tag] -> [String] -> [String]
-divide [] t xs = map head (group xs)
-divide s t xs = divide (tail s) t (xs ++ (verifyMatches t (head s) []))
-                
+divide :: [String] -> [Tag] -> ([String], String) -> ([String], String)
+divide [] t (a,b) = (a,b)
+divide s t (a,b) = case (length (verifyMatches t (head s) [])) of
+                        0 -> divide (tail s) t (a,b) 
+                        1 -> divide (tail s) t (a ++ [head (verifyMatches t (head s) [])], "") 
+                        otherwise -> divide (tail s) t (a ++ [head (verifyMatches t (head s) [])], "[WARNING] Sobreposicao de tags " ++ (printTag (verifyMatches t (head s) []) []))                       
+      
 printTag :: [String] -> String -> String
 printTag [] ys = tail ys
 printTag xs ys = printTag (tail xs) (ys ++ " " ++ head xs) 
+
+printTag' :: ([String],String) -> String -> String
+printTag' ([],b) xs = (tail xs) ++ "\n" ++ b
+printTag' (a,b) xs = printTag' ((tail a),b) (xs ++ " " ++ (head a)) 

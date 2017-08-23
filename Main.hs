@@ -57,6 +57,6 @@ divideFile s t = do {catch (open) ex;}
                   
 divideInput :: String -> [Tag] -> IO ()
 divideInput [] _ = putStrLn "[ERROR] Falta de parâmetro"
-divideInput s t = do let r = (printTag (divide (quebra s []) t []) "")  
+divideInput s t = do let r = (printTag' (divide (quebra s []) t ([],[])) "")  
                      putStrLn r
                      writeFile "resultado.txt" r

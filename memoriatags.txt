@@ -1,6 +1,0 @@
-int: 12+
-var: ab.
-int: 12+
-var: ab.
-int: 12+
-car: ab+
