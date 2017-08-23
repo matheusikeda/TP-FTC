@@ -43,7 +43,7 @@ command t = do input <- getLine
                                                                     command t                                                      
                                              Right s -> do putStrLn s
                                                            command t
-divideFile :: String -> [Tag] -> IO ()
+divideFile :: String -> [Tag] -> IO () --realiza a divisao em tags de uma palavra passado por arquivo
 divideFile [] _ = putStrLn "[ERROR] Falta de parâmetro"
 divideFile s t = do {catch (open) ex;}
                     where 
@@ -55,7 +55,7 @@ divideFile s t = do {catch (open) ex;}
                                              putStrLn "[ERROR] Arquivo inexistente "
                                       else ioError erro  
                   
-divideInput :: String -> [Tag] -> IO ()
+divideInput :: String -> [Tag] -> IO () --realiza a divisao em tags de um  palavra passada 
 divideInput [] _ = putStrLn "[ERROR] Falta de parâmetro"
 divideInput s t = do let r = (printTag' (divide (quebra s []) t ([],[])) "")  
                      putStrLn r

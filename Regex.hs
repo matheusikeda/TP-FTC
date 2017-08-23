@@ -27,7 +27,7 @@ splits st = [splitAt n st | n <- [0 .. length st]]
 frontSplits :: [a] -> [([a],[a])]
 frontSplits st = [splitAt n st | n <- [1  .. length st]]
 
-matches :: Reg -> String -> Bool
+matches :: Reg -> String -> Bool --verifica, dado uma ER, se a palavra faz parte 
 matches Lambda st = (st == "")
 matches (Literal ch) st = (st == [ch])
 matches (Or r1 r2) st = matches r1 st || matches r2 st
@@ -64,28 +64,28 @@ searchTag xs s b = if ((fst $ head xs) == s)
                     else
                         searchTag (tail xs) s b 
                         
-verifyMatches :: [Tag] -> String -> [String] -> [String]
+verifyMatches :: [Tag] -> String -> [String] -> [String] --verifica, dado um conj de Tags, se palavra faz parte de alguma 
 verifyMatches [] s [] = []
 verifyMatches [] s xs = reverse xs
 verifyMatches t s xs = if (matches (head $ snd $ head t) s == True)
                             then verifyMatches (tail t) s ((fst $ head t):xs)
                             else verifyMatches (tail t) s xs
 
-quebra :: String -> [String] -> [String]
+quebra :: String -> [String] -> [String] --encontra as combinacoes da palavra
 quebra [] st = st 
 quebra s st = quebra (tail s) (st ++ (tail $ inits s))
 
-divide :: [String] -> [Tag] -> ([String], String) -> ([String], String)
+divide :: [String] -> [Tag] -> ([String], String) -> ([String], String) --retorna uma tupla (divisao em tags, aviso) 
 divide [] t (a,b) = (a,b)
 divide s t (a,b) = case (length (verifyMatches t (head s) [])) of
                         0 -> divide (tail s) t (a,b) 
                         1 -> divide (tail s) t (a ++ [head (verifyMatches t (head s) [])], "") 
                         otherwise -> divide (tail s) t (a ++ [head (verifyMatches t (head s) [])], "[WARNING] Sobreposicao de tags " ++ (printTag (verifyMatches t (head s) []) []))                       
       
-printTag :: [String] -> String -> String
+printTag :: [String] -> String -> String --imprime uma lista de tags
 printTag [] ys = tail ys
 printTag xs ys = printTag (tail xs) (ys ++ " " ++ head xs) 
 
-printTag' :: ([String],String) -> String -> String
+printTag' :: ([String],String) -> String -> String --imprime uma tupla (divisao em tags,aviso) {aviso vazio ou nao}
 printTag' ([],b) xs = (tail xs) ++ "\n" ++ b
 printTag' (a,b) xs = printTag' ((tail a),b) (xs ++ " " ++ (head a)) 
