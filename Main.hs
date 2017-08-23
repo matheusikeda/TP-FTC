@@ -30,7 +30,8 @@ command t = do input <- getLine
                                clear "resultado.txt" 
                     otherwise -> if ((head input) == ':')
                                     then 
-                                        putStrLn "[ERROR] Comando inválido"
+                                        do putStrLn "[ERROR] Comando inválido"
+                                           command t
                                     else 
                                         case (verifyTags input) of
                                              Left _ -> do if ((searchTag t (fst $ span (/= ':') input) [] == []))
